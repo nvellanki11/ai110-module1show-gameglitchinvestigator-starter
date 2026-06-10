@@ -58,6 +58,25 @@ if "history" not in st.session_state:
 if "input_nonce" not in st.session_state:
     st.session_state.input_nonce = 0
 
+if "last_difficulty" not in st.session_state:
+    st.session_state.last_difficulty = difficulty
+
+
+def reset_game():
+    """Start a fresh game: reset all per-game state and clear the input field."""
+    st.session_state.attempts = 0
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.score = 0
+    st.session_state.status = "playing"
+    st.session_state.history = []
+    st.session_state.input_nonce += 1
+
+
+# Switching difficulty starts a brand-new game (resets score, attempts, history, secret, etc.)
+if difficulty != st.session_state.last_difficulty:
+    st.session_state.last_difficulty = difficulty
+    reset_game()
+
 st.subheader("Make a guess")
 
 # FIXME: range was hardcoded to "1 and 100"; now reflects the active difficulty
@@ -86,12 +105,7 @@ with col2:
 
 if new_game:
     # FIXME: New Game now resets score/status/history too (not just attempts/secret) and uses the difficulty range
-    st.session_state.attempts = 0
-    st.session_state.secret = random.randint(low, high)
-    st.session_state.score = 0
-    st.session_state.status = "playing"
-    st.session_state.history = []
-    st.session_state.input_nonce += 1  # FIXME: rotate input key so the guess field clears on New Game
+    reset_game()
     st.success("New game started.")
     st.rerun()
 
@@ -108,14 +122,24 @@ if submit:
     ok, guess_int, err = parse_guess(raw_guess)
 
     if not ok:
-        st.session_state.history.append(raw_guess)
+        st.session_state.history.append({
+            "guess": raw_guess,
+            "outcome": None,
+            "message": err,
+            "hint_shown": show_hint,
+        })
         st.error(err)
     else:
-        st.session_state.history.append(guess_int)
-
         # FIXME: previously cast secret to str on even attempts (string comparison); always compare as int
         outcome = check_guess(guess_int, st.session_state.secret)
         message = HINTS[outcome]
+
+        st.session_state.history.append({
+            "guess": guess_int,
+            "outcome": outcome,
+            "message": message,
+            "hint_shown": show_hint,
+        })
 
         if show_hint:
             st.warning(message)
@@ -141,6 +165,26 @@ if submit:
                     f"The secret was {st.session_state.secret}. "
                     f"Score: {st.session_state.score}"
                 )
+
+# Guess History — rendered at the end so it includes the guess submitted this run.
+st.sidebar.divider()
+st.sidebar.subheader("📜 Guess History")
+
+if not st.session_state.history:
+    st.sidebar.caption("No guesses yet — make your first guess!")
+else:
+    st.sidebar.caption(f"{len(st.session_state.history)} guess(es) so far:")
+    for i, record in enumerate(st.session_state.history, start=1):
+        guess = record["guess"]
+        if record["outcome"] is None:
+            # Invalid input (not a number / empty).
+            st.sidebar.markdown(f"**{i}.** `{guess}` — ⚠️ {record['message']}")
+        elif record["hint_shown"]:
+            # Show hint was on for this guess: include guess + the hint it got.
+            st.sidebar.markdown(f"**{i}.** `{guess}` — {record['message']}")
+        else:
+            # Show hint was off: list the guess but keep its hint hidden.
+            st.sidebar.markdown(f"**{i}.** `{guess}` — _(hint hidden)_")
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")

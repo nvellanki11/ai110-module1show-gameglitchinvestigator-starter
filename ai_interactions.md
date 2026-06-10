@@ -10,16 +10,18 @@
 
 **What task did you give the agent?**
 
-<!-- Describe the goal you asked the agent to accomplish -->
+I asked Claude to generate comprehensive test cases for the various game inputs. I told it to include base and edge cases for each user interaction
+I also asked it to generate a Guess History sidebar. I told it to make a visual for the user showing their game's guesses and what hint they recieved.
 
 **What did the agent do?**
 
-<!-- List the steps the agent took (files edited, commands run, etc.) -->
+It ran a few complex bash commands, mostly to view and run the contents of the pytest, and then made multiple code suggestions, writing one each segment of test cases and a brief comment explaining what was being tested.
+For the Guess History, it made some adjustments in the app.py code, reran the server and pytests to confirm that the made changes worked as expected.
 
 **What did you have to verify or fix manually?**
 
-<!-- Describe anything the agent got wrong or that required human review -->
-
+I verified that each description matched the functionality of the test case generated, and also worked to minimize unnecessary tests
+I also had to review changes to the core app logic to ensure the new code was functional and easy to follow. I also verified that existing features were not modified and test cases still passed.
 ---
 
 ## Test Generation (SF7)

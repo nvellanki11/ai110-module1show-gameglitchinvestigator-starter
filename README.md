@@ -25,19 +25,19 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [ X] Describe the game's purpose.
+- [ X] Detail which bugs you found.
+- [ X] Explain what fixes you applied.
 
 ## 📸 Demo Walkthrough
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. Select Game difficulty- options are Easy, Medium, Hard, which modifies number of attempts and range of possible values to choose from
+2. Enter a guess- at the moment, guesses outside the range can be entered and are considered an attempt
+3. The game will return a hint (if selected) stating whether your guess was too high or too low. One attempt is docked from those remaining.
+4. Enter more guesses, getting closer and closer to the number
+5. Game will congratulate you if you guess the number right. Select 'new game' to reset target number, score, and attempts
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
@@ -48,6 +48,9 @@ Describe your fixed game in numbered steps so a reader can follow along without 
 # pytest tests/
 # ========================= X passed in 0.XXs =========================
 ```
+tests/test_game_logic.py .....................                                                                      [100%]
+
+=================================================== 21 passed in 0.01s ====================================================
 
 ## 🚀 Stretch Features
 
